@@ -1,0 +1,31 @@
+{
+  "name": "AngularAuth-API",
+  "version": "1.0.0",
+  "description": "AngularAuth-API",
+  "main": "server.js",
+  "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "jsonwebtoken": "^5.5.4",
+    "morgan": "^1.6.1",
+    "mysql": "^2.10.2",
+    "sequelize": "^3.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HarryWhewell/AngularAuth-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HarryWhewell/AngularAuth-API/issues"
+  },
+  "homepage": "https://github.com/HarryWhewell/AngularAuth-API#readme"
+}
