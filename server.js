@@ -50,45 +50,12 @@ router.get('/', function(req, res){
     res.json({ message: 'Welcome to the Adventure-Store API' });
 });
 
-// all routes are prefixed with /api
-app.use('/api', router);
-
-// USER ROUTES ----------------------------------
-router.route('/users')
-    // create user
-    .post(function(req, res){
-        var name = req.body.name;
-        var email = req.body.email;
-        var password = req.body.password;
-        var role = req.body.role;
-
-        var user = User.build({name: name, email: email, password: password, role: role});
-        user.add(function(){
-            res.json({message: 'User created!'});
-        },function(err){
-            res.send(err);
-        });
-    })
-    // get all users
-    .get(function(req, res){
-        var user = User.build();
-        user.retrieveAll(function(users){
-            if(users){
-                res.json(users);
-            }else{
-                res.status(401).send( "User not found");
-            }
-        }, function(err){
-            res.send(err  + ":User not found");
-        })
-    });
 // AUTHENTICATE ROUTES ----------------------------------
 router.route('/authenticate')
     .post(function(req,res){
         var user = User.build();
         var email = req.body.email;
         var password = req.body.password;
-
         user.retrieveByEmail(email, function(returnedUser){
             var payload = {
                 "iss": "auth-api",
@@ -121,6 +88,72 @@ router.route('/authenticate')
         })
     });
 
+
+
+// USER POST ROUTES -----------------------------
+router.route('/users')
+    // create user
+    .post(function(req, res){
+        var name = req.body.name;
+        var email = req.body.email;
+        var password = req.body.password;
+        var role = req.body.role;
+
+        var user = User.build({name: name, email: email, password: password, role: role});
+        user.add(function(){
+            res.json({message: 'User created!'});
+        },function(err){
+            res.send(err);
+        });
+    });
+
+// ROUTE MIDDLEWARE --------------------------
+router.use(function(req,res,next){
+
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+    if(token){
+        jwt.verify(token, app.get('superSecret'), function(err, decoded){
+            if(err){
+                return res.json({
+                    success: false,
+                    message: 'Failed to authenticate token'
+                });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+    } else {
+
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+    }
+});
+
+
+// USER GET ROUTES ---------------------------
+router.route('/users')
+    // get all users
+    .get(function(req, res){
+        var user = User.build();
+        user.retrieveAll(function(users){
+            if(users){
+                res.json(users);
+            }else{
+                res.status(401).send( "User not found");
+            }
+        }, function(err){
+            res.send(err  + ":User not found");
+        })
+    });
+// all routes are prefixed with /api
+app.use('/api', router);
 // START THE SERVER
 // =============================================================================
 
