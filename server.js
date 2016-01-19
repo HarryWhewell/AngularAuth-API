@@ -34,12 +34,14 @@ app.set('superSecret', 'harryjameswhewell');
 
 var router = express.Router();
 
+
+
 // middleware to use for all requests
 router.use(function(req, res, next) {
     // do logging
     console.log('Request being made.');
 
-    // allow cross platform access
+    // allow cross origin access
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
@@ -91,7 +93,7 @@ router.route('/authenticate')
 
 
 // USER POST ROUTES -----------------------------
-router.route('/users')
+router.route('/user/register')
     // create user
     .post(function(req, res){
         var name = req.body.name;
@@ -101,9 +103,9 @@ router.route('/users')
 
         var user = User.build({name: name, email: email, password: password, role: role});
         user.add(function(){
-            res.json({message: 'User created!'});
+            res.json({message: 'User created!', success: true});
         },function(err){
-            res.send(err);
+            res.json({message: 'User  not created!', success: false});
         });
     });
 
@@ -138,7 +140,7 @@ router.use(function(req,res,next){
 
 
 // USER GET ROUTES ---------------------------
-router.route('/users')
+router.route('/user/get')
     // get all users
     .get(function(req, res){
         var user = User.build();
